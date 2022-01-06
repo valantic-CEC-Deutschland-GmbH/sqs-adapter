@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<transfers xmlns="spryker:transfer-01"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="spryker:transfer-01 http://static.spryker.com/transfer-01.xsd">
+
+    <transfer name="AwsSqsClientSendMessageAttribute">
+        <property name="DataType" type="string"/>
+        <property name="StringValue" type="string"/>
+    </transfer>
+
+    <transfer name="AwsSqsClientSendMessageRequest">
+        <property name="DelaySeconds" type="int"/>
+        <property name="MessageAttributes" type="array" associative="true"/>
+        <property name="MessageBody" type="array"/>
+        <property name="QueueUrl" type="string"/>
+    </transfer>
+
+    <transfer name="AwsSqsClientSendMessageResponse">
+        <property name="MD5OfMessageAttributes" type="string"/>
+        <property name="MD5OfMessageBody" type="string"/>
+        <property name="MD5OfMessageSystemAttributes" type="string"/>
+        <property name="MessageId" type="string"/>
+        <property name="SequenceNumber" type="string"/>
+    </transfer>
+
+    <transfer name="AwsSqsClientReceiveMessageRequest">
+        <property name="AttributeNames" type="array"/>
+        <property name="MaxNumberOfMessages" type="int"/>
+        <property name="MessageAttributeNames" type="array"/>
+        <property name="QueueUrl" type="string"/>
+        <property name="WaitTimeSeconds" type="int"/>
+    </transfer>
+
+    <transfer name="AwsSqsClientReceiveMessageResponse">
+        <property name="request" type="array"/>
+        <property name="messages" type="AwsSqsMessage[]" singular="message"/>
+    </transfer>
+
+    <transfer name="AwsSqsClientDeleteMessageRequest">
+        <property name="QueueUrl" type="string"/>
+        <property name="ReceiptHandle" type="string"/>
+    </transfer>
+
+    <transfer name="AwsSqsClientDeleteMessageResponse">
+        <property name="request" type="AwsSqsClientDeleteMessageResponse"/>
+    </transfer>
+
+    <transfer name="AwsSqsMessage">
+        <property name="Attributes" type="array"/>
+        <property name="Body" type="string"/>
+        <property name="MD5OfBody" type="string"/>
+        <property name="MD5OfMessageAttributes" type="string"/>
+        <property name="MessageAttributes" type="array"/>
+        <property name="MessageId" type="string"/>
+        <property name="ReceiptHandle" type="string"/>
+    </transfer>
+
+    <transfer name="AwsSqsConsumerOption">
+        <property name="checkMessageCount" type="bool"/>
+    </transfer>
+
+</transfers>
