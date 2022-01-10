@@ -22,32 +22,19 @@ interface SqsConstants
     /**
      * @var string
      */
-    public const SPRYKER_AWS_SQS_CLIENT_CONFIG = 'SPRYKER_AWS_SQS_CLIENT_CONFIG';
+    public const SQS_CONFIG_CREDENTIALS_KEY = 'SQS_CONFIG_CREDENTIALS_KEY';
 
     /**
      * @var string
      */
-    public const SPRYKER_SQS_AWS_ACCOUNT_ID = 'SPRYKER_SQS_AWS_ACCOUNT_ID';
+    public const SQS_CONFIG_CREDENTIALS_SECRET = 'SQS_CONFIG_CREDENTIALS_SECRET';
 
     /**
+     * Define whether IAM role should be used. If not, credentials must be passed.
+     *
      * @var string
      */
-    public const SQS_CONFIG_PARAM_REGION = 'SQS_CONFIG_PARAM_REGION';
-
-    /**
-     * @var string
-     */
-    public const SQS_CONFIG_PARAM_VERSION = 'SPRYKER_SQS_CONNECTOR_CONFIG_PARAM_VERSION';
-
-    /**
-     * @var string
-     */
-    public const SPRYKER_SQS_CONNECTOR_CONFIG_CREDENTIALS_KEY = 'SPRYKER_SQS_CONNECTOR_CONFIG_CREDENTIALS_KEY';
-
-    /**
-     * @var string
-     */
-    public const SPRYKER_SQS_CONNECTOR_CONFIG_CREDENTIALS_SECRET = 'SPRYKER_SQS_CONNECTOR_CONFIG_CREDENTIALS_SECRET';
+    public const SQS_CONFIG_PARAM_USE_IAM = 'SQS_CONFIG_PARAM_USE_IAM';
 
     /**
      * @var string
@@ -62,12 +49,25 @@ interface SqsConstants
     /**
      * @var string
      */
-    public const AWS_SQS_CONFIG_QUEUE_OPTIONS = 'AWS_SQS_CONFIG_QUEUE_OPTIONS';
+    public const SQS_CONFIG_QUEUE_OPTIONS = 'SQS_CONFIG_QUEUE_OPTIONS';
 
     /**
-     * Define whether IAM role should be used. If not, credentials must be passed.
-     *
      * @var string
      */
-    public const SPRYKER_SQS_CONNECTOR_CONFIG_PARAM_USE_IAM = 'SPRYKER_SQS_CONNECTOR_CONFIG_PARAM_USE_IAM';
+    public const AWS_SQS_CLIENT_CONFIG = 'AWS_SQS_CLIENT_CONFIG';
+
+    /**
+     * @var string
+     */
+    public const AWS_SQS_ACCOUNT_ID = 'AWS_SQS_ACCOUNT_ID';
+
+    /**
+     * @var string
+     */
+    public const AWS_SQS_CONFIG_PARAM_REGION = 'AWS_SQS_CONFIG_PARAM_REGION';
+
+    /**
+     * @var string
+     */
+    public const AWS_SQS_CONFIG_PARAM_VERSION = 'AWS_SQS_CONFIG_PARAM_VERSION';
 }

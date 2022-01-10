@@ -19,6 +19,6 @@ class SqsConfig extends AbstractBundleConfig
      */
     public function getDefaultSqsQueueOptions(): array
     {
-        return $this->get(SqsConstants::AWS_SQS_CONFIG_QUEUE_OPTIONS, []);
+        return $this->get(SqsConstants::SQS_CONFIG_QUEUE_OPTIONS, []);
     }
 }
