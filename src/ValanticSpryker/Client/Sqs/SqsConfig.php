@@ -56,26 +56,6 @@ class SqsConfig extends AbstractBundleConfig
     }
 
     /**
-     * @return array
-     */
-    public function getAwsSqsClientConfig(): array
-    {
-        return $this->get(SqsConstants::SPRYKER_AWS_SQS_CLIENT_CONFIG, $this->getDefaultAwsSqsClientConfig());
-    }
-
-    /**
-     * @return array
-     */
-    protected function getDefaultAwsSqsClientConfig(): array
-    {
-        return [
-            self::AWS_SQS_CLIENT_CONFIG_KEY_REGION => $this->getAwsRegion(),
-            self::AWS_SQS_CLIENT_CONFIG_KEY_VERSION => $this->getAwsApiVersion(),
-            self::AWS_SQS_CLIENT_CONFIG_KEY_ENDPOINT => $this->getBaseUrl(),
-        ];
-    }
-
-    /**
      * @return string|null
      */
     public function getBaseUrl(): ?string
@@ -97,33 +77,9 @@ class SqsConfig extends AbstractBundleConfig
     public function getCredentials(): array
     {
         return [
-            self::AWS_SQS_CLIENT_CONFIG_KEY_CREDENTIALS_KEY => $this->get(SqsConstants::SPRYKER_SQS_CONNECTOR_CONFIG_CREDENTIALS_KEY, 'default-dummy-key'),
-            self::AWS_SQS_CLIENT_CONFIG_KEY_CREDENTIALS_SECRET => $this->get(SqsConstants::SPRYKER_SQS_CONNECTOR_CONFIG_CREDENTIALS_SECRET, 'default-dummy-secret'),
+            self::AWS_SQS_CLIENT_CONFIG_KEY_CREDENTIALS_KEY => $this->get(SqsConstants::SQS_CONFIG_CREDENTIALS_KEY, 'default-dummy-key'),
+            self::AWS_SQS_CLIENT_CONFIG_KEY_CREDENTIALS_SECRET => $this->get(SqsConstants::SQS_CONFIG_CREDENTIALS_SECRET, 'default-dummy-secret'),
         ];
-    }
-
-    /**
-     * @return string
-     */
-    public function getAwsAccountId(): string
-    {
-        return $this->get(SqsConstants::SPRYKER_SQS_AWS_ACCOUNT_ID);
-    }
-
-    /**
-     * @return string
-     */
-    public function getAwsRegion(): string
-    {
-        return $this->get(SqsConstants::SQS_CONFIG_PARAM_REGION, 'us-east-1');
-    }
-
-    /**
-     * @return string
-     */
-    public function getAwsApiVersion(): string
-    {
-        return $this->get(SqsConstants::SQS_CONFIG_PARAM_VERSION, 'latest');
     }
 
     /**
@@ -147,6 +103,50 @@ class SqsConfig extends AbstractBundleConfig
      */
     public function useIamRole(): bool
     {
-        return $this->get(SqsConstants::SPRYKER_SQS_CONNECTOR_CONFIG_PARAM_USE_IAM, false);
+        return $this->get(SqsConstants::SQS_CONFIG_PARAM_USE_IAM, false);
+    }
+
+    /**
+     * @return array
+     */
+    public function getAwsSqsClientConfig(): array
+    {
+        return $this->get(SqsConstants::AWS_SQS_CLIENT_CONFIG, $this->getDefaultAwsSqsClientConfig());
+    }
+
+    /**
+     * @return array
+     */
+    protected function getDefaultAwsSqsClientConfig(): array
+    {
+        return [
+            self::AWS_SQS_CLIENT_CONFIG_KEY_REGION => $this->getAwsRegion(),
+            self::AWS_SQS_CLIENT_CONFIG_KEY_VERSION => $this->getAwsApiVersion(),
+            self::AWS_SQS_CLIENT_CONFIG_KEY_ENDPOINT => $this->getBaseUrl(),
+        ];
+    }
+
+    /**
+     * @return string
+     */
+    public function getAwsAccountId(): string
+    {
+        return $this->get(SqsConstants::AWS_SQS_ACCOUNT_ID);
+    }
+
+    /**
+     * @return string
+     */
+    public function getAwsRegion(): string
+    {
+        return $this->get(SqsConstants::AWS_SQS_CONFIG_PARAM_REGION, 'us-east-1');
+    }
+
+    /**
+     * @return string
+     */
+    public function getAwsApiVersion(): string
+    {
+        return $this->get(SqsConstants::AWS_SQS_CONFIG_PARAM_VERSION, 'latest');
     }
 }
