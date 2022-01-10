@@ -1,6 +1,5 @@
 {
   "name": "valantic-spryker/sqs",
-  "version": "dev-master",
   "type": "library",
   "description": "SQS implementation as an adapter for spryker/queue",
   "homepage": "https://www.valantic.com",

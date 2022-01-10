@@ -51,7 +51,7 @@ class SqsFactory extends AbstractFactory
         return new Manager(
             $this->createAwsSqsClient(),
             $this->getConfig(),
-            $this->createQueueUrlHelper()
+            $this->createQueueUrlHelper(),
         );
     }
 
@@ -63,7 +63,7 @@ class SqsFactory extends AbstractFactory
         return new Consumer(
             $this->createAwsSqsClient(),
             $this->createQueueUrlHelper(),
-            $this->getConfig()
+            $this->getConfig(),
         );
     }
 
@@ -74,7 +74,7 @@ class SqsFactory extends AbstractFactory
     {
         return new Publisher(
             $this->createAwsSqsClient(),
-            $this->createQueueUrlHelper()
+            $this->createQueueUrlHelper(),
         );
     }
 
@@ -84,7 +84,7 @@ class SqsFactory extends AbstractFactory
     public function createQueueUrlHelper(): QueueUrlHelperInterface
     {
         return new QueueUrlHelper(
-            $this->getConfig()
+            $this->getConfig(),
         );
     }
 

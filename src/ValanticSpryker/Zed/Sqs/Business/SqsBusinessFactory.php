@@ -20,7 +20,7 @@ class SqsBusinessFactory extends AbstractBusinessFactory
     {
         return new Queue(
             $this->getSqsClient(),
-            $this->getConfig()
+            $this->getConfig(),
         );
     }
 

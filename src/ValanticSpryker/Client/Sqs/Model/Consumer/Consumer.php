@@ -39,14 +39,14 @@ class Consumer implements ConsumerInterface
      * @param int $chunkSize
      * @param array $options
      *
-     * @return \Generated\Shared\Transfer\QueueReceiveMessageTransfer[]
+     * @return array<\Generated\Shared\Transfer\QueueReceiveMessageTransfer>
      */
     public function receiveMessages($queueName, $chunkSize = 10, array $options = [])
     {
         $queueUrl = $this->queueUrlHelper
             ->buildQueueUrl($queueName);
 
-        $result = $this->awsSqsClient->receiveMessageAsync([
+        $result = $this->awsSqsClient->receiveMessage([
             'MaxNumberOfMessages' => $chunkSize,
             'MessageAttributeNames' => ['All'],
             'QueueUrl' => $queueUrl,

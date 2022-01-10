@@ -2,7 +2,26 @@
 image: registry.gitlab.nxs360.com/docker/php:7.4-cli
 
 stages:
+  - validation
   - deploy
+
+composer:validate:
+  stage: validation
+  script:
+    - composer validate
+
+code:style:
+  stage: validation
+  script:
+    - composer install -o
+    - composer cs-check
+
+code:test:
+  stage: validation
+  script:
+    - composer install -o
+    - composer test
+    - composer stan
 
 deploy:composer:
   stage: deploy
@@ -21,6 +40,6 @@ deploy:composer:
       fi
   variables:
     URL: "${CI_API_V4_URL}/projects/$CI_PROJECT_ID/packages/composer?job_token=$CI_JOB_TOKEN"
-  only:
-    - tags
-    - branches
+  rules:
+    - if: $CI_MERGE_REQUEST_ID
+      when: never
