@@ -4,3 +4,7 @@ parameters:
         - src/
     checkMissingIterableValueType: false
     checkGenericClassInNonGenericObjectType: false
+    bootstrapFiles:
+        - tests/bootstrap.php
+    ignoreErrors:
+        - '#Call to method sqs\(\) on an unknown class .+AutoCompletion#'

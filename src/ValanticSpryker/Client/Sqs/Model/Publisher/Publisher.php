@@ -46,7 +46,7 @@ class Publisher implements PublisherInterface
 
     /**
      * @param string $queueName
-     * @param \Generated\Shared\Transfer\QueueSendMessageTransfer[] $queueSendMessageTransfers
+     * @param array<\Generated\Shared\Transfer\QueueSendMessageTransfer> $queueSendMessageTransfers
      *
      * @return void
      */
@@ -94,7 +94,7 @@ class Publisher implements PublisherInterface
 
     /**
      * @param string $queueName
-     * @param \Generated\Shared\Transfer\QueueSendMessageTransfer[] $sendBatch
+     * @param array<\Generated\Shared\Transfer\QueueSendMessageTransfer> $sendBatch
      *
      * @return array
      */

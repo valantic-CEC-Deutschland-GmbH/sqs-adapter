@@ -2,8 +2,8 @@
 
 namespace ValanticSpryker\Client\Sqs;
 
-use ValanticSpryker\Shared\Sqs\SqsConstants;
 use Spryker\Client\Kernel\AbstractBundleConfig;
+use ValanticSpryker\Shared\Sqs\SqsConstants;
 
 class SqsConfig extends AbstractBundleConfig
 {
