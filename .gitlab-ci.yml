@@ -45,12 +45,3 @@ deploy:composer:
     - if: $CI_MERGE_REQUEST_ID
       when: never
     - if: $CI_COMMIT_TAG =~ /^?[0-9]+[.][0-9]+([.][0-9]+)?$/
-
-post-test:install-package:
-  stage: post-test
-  before_script:
-    - |
-      composer config repositories.gitlab.nxs360.com/461 '{"type": "composer", "url": "https://gitlab.nxs360.com/api/v4/group/461/-/packages/composer/packages.json"}'
-    - composer config gitlab-token.${CI_SERVER_HOST} ${CI_DEPLOY_USER} ${CI_DEPLOY_PASSWORD}
-  script:
-    - composer require valantic-spryker/sqs
