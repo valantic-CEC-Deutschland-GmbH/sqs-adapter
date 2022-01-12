@@ -12,6 +12,8 @@ composer:validate:
 
 code:style:
   stage: validation
+  before_script:
+    - composer config gitlab-token.${CI_SERVER_HOST} ${CI_DEPLOY_USER} ${CI_DEPLOY_PASSWORD}
   script:
     - composer install -o
     - composer cs-check
