@@ -13,12 +13,16 @@ composer:validate:
 
 code:style:
   stage: validation
+  before_script:
+    - composer config gitlab-token.${CI_SERVER_HOST} ${GITLAB_COMPOSER_USER} ${GITLAB_COMPOSER_PASS}
   script:
     - composer install -o
     - composer cs-check
 
 code:test:
   stage: validation
+  before_script:
+    - composer config gitlab-token.${CI_SERVER_HOST} ${GITLAB_COMPOSER_USER} ${GITLAB_COMPOSER_PASS}
   script:
     - composer install -o
     - composer test

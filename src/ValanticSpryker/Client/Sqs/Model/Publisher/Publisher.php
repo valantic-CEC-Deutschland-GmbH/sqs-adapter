@@ -3,27 +3,30 @@ declare(strict_types = 1);
 
 namespace ValanticSpryker\Client\Sqs\Model\Publisher;
 
-use Aws\Sqs\SqsClient;
 use Generated\Shared\Transfer\QueueSendMessageTransfer;
+use Generated\Shared\Transfer\SqsSendMessageArgsTransfer;
+use Generated\Shared\Transfer\SqsSendMessageBatchArgsTransfer;
+use Generated\Shared\Transfer\SqsSendMessageBatchEntryTransfer;
 use Spryker\Shared\Log\LoggerTrait;
+use ValanticSpryker\Client\Sqs\Dependency\Client\SqsAdapterToAwsSqsClientInterface;
 use ValanticSpryker\Client\Sqs\Model\Helper\QueueUrlHelperInterface;
 
 class Publisher implements PublisherInterface
 {
     use LoggerTrait;
 
-    private SqsClient $awsSqsClient;
+    private SqsAdapterToAwsSqsClientInterface $awsSqsClient;
 
     private QueueUrlHelperInterface $queueUrlHelper;
 
     private int $batchSize = 10;
 
     /**
-     * @param \Aws\Sqs\SqsClient $awsSqsClient
+     * @param \ValanticSpryker\Client\Sqs\Dependency\Client\SqsAdapterToAwsSqsClientInterface $awsSqsClient
      * @param \ValanticSpryker\Client\Sqs\Model\Helper\QueueUrlHelperInterface $queueUrlHelper
      */
     public function __construct(
-        SqsClient $awsSqsClient,
+        SqsAdapterToAwsSqsClientInterface $awsSqsClient,
         QueueUrlHelperInterface $queueUrlHelper
     ) {
         $this->awsSqsClient = $awsSqsClient;
@@ -36,12 +39,17 @@ class Publisher implements PublisherInterface
      *
      * @return void
      */
-    public function sendMessage($queueName, QueueSendMessageTransfer $queueSendMessageTransfer)
+    public function sendMessage($queueName, QueueSendMessageTransfer $queueSendMessageTransfer): void
     {
-        $message = $this->createMessage($queueName, $queueSendMessageTransfer);
+        $queueUrl = $this->queueUrlHelper
+            ->buildQueueUrl($queueName);
+
+        $sqsSendMessageArgsTransfer = (new SqsSendMessageArgsTransfer())
+            ->setQueueUrl($queueUrl)
+            ->setMessageBody($queueSendMessageTransfer->getBody());
 
         $this->awsSqsClient
-            ->sendMessageAsync($message);
+            ->sendMessageAsync($sqsSendMessageArgsTransfer);
     }
 
     /**
@@ -50,7 +58,7 @@ class Publisher implements PublisherInterface
      *
      * @return void
      */
-    public function sendMessages($queueName, array $queueSendMessageTransfers)
+    public function sendMessages($queueName, array $queueSendMessageTransfers): void
     {
         $sendBatch = [];
 
@@ -58,62 +66,45 @@ class Publisher implements PublisherInterface
             $sendBatch[] = $queueSendMessageTransfer;
 
             if (count($sendBatch) >= $this->batchSize) {
-                $messages = $this->createMessageBatch($queueName, $sendBatch);
+                $sqsSendMessageBatchArgsTransfer = $this->createMessageBatch($queueName, $sendBatch);
 
                 $this->awsSqsClient
-                    ->sendMessageBatchAsync($messages);
+                    ->sendMessageBatchAsync($sqsSendMessageBatchArgsTransfer);
 
                 $sendBatch = [];
             }
         }
 
         if (!empty($sendBatch)) {
-            $messages = $this->createMessageBatch($queueName, $sendBatch);
+            $sqsSendMessageBatchArgsTransfer = $this->createMessageBatch($queueName, $sendBatch);
 
             $this->awsSqsClient
-                ->sendMessageBatchAsync($messages);
+                ->sendMessageBatchAsync($sqsSendMessageBatchArgsTransfer);
         }
     }
 
     /**
      * @param string $queueName
-     * @param \Generated\Shared\Transfer\QueueSendMessageTransfer $queueSendMessageTransfer
+     * @param array<\Generated\Shared\Transfer\QueueSendMessageTransfer> $queueSendMessageTransfers
      *
-     * @return array
+     * @return \Generated\Shared\Transfer\SqsSendMessageBatchArgsTransfer
      */
-    protected function createMessage(string $queueName, QueueSendMessageTransfer $queueSendMessageTransfer): array
+    protected function createMessageBatch(string $queueName, array $queueSendMessageTransfers): SqsSendMessageBatchArgsTransfer
     {
         $queueUrl = $this->queueUrlHelper
             ->buildQueueUrl($queueName);
 
-        return [
-            'MessageBody' => $queueSendMessageTransfer->getBody(),
-            'QueueUrl' => $queueUrl,
-        ];
-    }
+        $sqsSendMessageBatchArgsTransfer = (new SqsSendMessageBatchArgsTransfer())
+            ->setQueueUrl($queueUrl);
 
-    /**
-     * @param string $queueName
-     * @param array<\Generated\Shared\Transfer\QueueSendMessageTransfer> $sendBatch
-     *
-     * @return array
-     */
-    protected function createMessageBatch(string $queueName, array $sendBatch)
-    {
-        $queueUrl = $this->queueUrlHelper
-            ->buildQueueUrl($queueName);
+        foreach ($queueSendMessageTransfers as $queueSendMessageTransfer) {
+            $sqsSendMessageBatchEntryTransfer = (new SqsSendMessageBatchEntryTransfer())
+                ->setMessageBody($queueSendMessageTransfer->getBody())
+                ->setId($queueSendMessageTransfer->getRoutingKey());
 
-        $entries = [];
-
-        foreach ($sendBatch as $queueSendMessageTransfer) {
-            $entries[] = [
-                'MessageBody' => $queueSendMessageTransfer->getBody(),
-            ];
+            $sqsSendMessageBatchArgsTransfer->addEntry($sqsSendMessageBatchEntryTransfer);
         }
 
-        return [
-            'Entries' => $entries,
-            'QueueUrl' => $queueUrl,
-        ];
+        return $sqsSendMessageBatchArgsTransfer;
     }
 }

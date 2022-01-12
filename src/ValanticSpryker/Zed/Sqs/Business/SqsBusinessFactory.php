@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace ValanticSpryker\Zed\Sqs\Business;
 
 use Spryker\Zed\Kernel\Business\AbstractBusinessFactory;
+use ValanticSpryker\Client\Sqs\SqsClientInterface;
 use ValanticSpryker\Zed\Sqs\Business\Model\Queue\Queue;
 use ValanticSpryker\Zed\Sqs\SqsDependencyProvider;
 
@@ -27,7 +28,7 @@ class SqsBusinessFactory extends AbstractBusinessFactory
     /**
      * @return \ValanticSpryker\Client\Sqs\SqsClientInterface
      */
-    protected function getSqsClient()
+    protected function getSqsClient(): SqsClientInterface
     {
         return $this->getProvidedDependency(SqsDependencyProvider::SQS_CLIENT);
     }

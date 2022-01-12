@@ -2,8 +2,12 @@
 
 namespace ValanticSpryker\Client\Sqs\Model\Manager;
 
-use Aws\Sqs\SqsClient;
+use Generated\Shared\Transfer\SqsCreateQueueArgsAttributesTransfer;
+use Generated\Shared\Transfer\SqsCreateQueueArgsTransfer;
+use Generated\Shared\Transfer\SqsDeleteQueueArgsTransfer;
+use Generated\Shared\Transfer\SqsPurgeQueueArgsTransfer;
 use Spryker\Shared\Log\LoggerTrait;
+use ValanticSpryker\Client\Sqs\Dependency\Client\SqsAdapterToAwsSqsClientInterface;
 use ValanticSpryker\Client\Sqs\Model\Helper\QueueUrlHelperInterface;
 use ValanticSpryker\Client\Sqs\SqsConfig;
 
@@ -14,7 +18,7 @@ class Manager implements ManagerInterface
     /**
      * @var string
      */
-    protected const TAG_VALUE_CREATOR_SPRYKER = 'Spryker';
+    protected const TAG_VALUE_CREATOR_SPRYKER = 'ValanticSpryker';
 
     /**
      * @var string
@@ -29,36 +33,21 @@ class Manager implements ManagerInterface
     /**
      * @var string
      */
-    protected const API_REQUEST_INDEX_QUEUE_NAME = 'QueueName';
-
-    /**
-     * @var string
-     */
-    protected const API_REQUEST_INDEX_ATTRIBUTES = 'Attributes';
-
-    /**
-     * @var string
-     */
-    protected const API_REQUEST_INDEX_TAGS = 'tags';
-
-    /**
-     * @var string
-     */
     protected const API_RESPONSE_QUEUE_URL = 'QueueUrl';
 
-    protected SqsClient $awsSqsClient;
+    protected SqsAdapterToAwsSqsClientInterface $awsSqsClient;
 
     protected SqsConfig $sqsConfig;
 
     protected QueueUrlHelperInterface $queueUrlHelper;
 
     /**
-     * @param \Aws\Sqs\SqsClient $awsSqsClient
+     * @param \ValanticSpryker\Client\Sqs\Dependency\Client\SqsAdapterToAwsSqsClientInterface $awsSqsClient
      * @param \ValanticSpryker\Client\Sqs\SqsConfig $sqsConfig
      * @param \ValanticSpryker\Client\Sqs\Model\Helper\QueueUrlHelperInterface $queueUrlHelper
      */
     public function __construct(
-        SqsClient $awsSqsClient,
+        SqsAdapterToAwsSqsClientInterface $awsSqsClient,
         SqsConfig $sqsConfig,
         QueueUrlHelperInterface $queueUrlHelper
     ) {
@@ -73,16 +62,21 @@ class Manager implements ManagerInterface
      *
      * @return array
      */
-    public function createQueue($queueName, array $options = [])
+    public function createQueue($queueName, array $options = []): array
     {
-        $result = $this->awsSqsClient->createQueue([
-            static::API_REQUEST_INDEX_ATTRIBUTES => $options,
-            static::API_REQUEST_INDEX_QUEUE_NAME => $queueName,
-            static::API_REQUEST_INDEX_TAGS => [
+        $sqsCreateQueueArgsAttributesTransfer = (new SqsCreateQueueArgsAttributesTransfer())
+            ->fromArray($options, true);
+
+        $sqsCreateQueueArgsTransfer = (new SqsCreateQueueArgsTransfer())
+            ->setQueueName($queueName)
+            ->setAttributes($sqsCreateQueueArgsAttributesTransfer)
+            ->setTags([
                 static::TAG_KEY_CREATOR => static::TAG_VALUE_CREATOR_SPRYKER,
                 static::TAG_KEY_NAME => $queueName,
-            ],
-        ]);
+            ]);
+
+        $result = $this->awsSqsClient
+            ->createQueue($sqsCreateQueueArgsTransfer);
 
         if ($result->hasKey(static::API_RESPONSE_QUEUE_URL)) {
             return $result->toArray();
@@ -97,14 +91,16 @@ class Manager implements ManagerInterface
      *
      * @return bool
      */
-    public function purgeQueue($queueName, array $options = [])
+    public function purgeQueue($queueName, array $options = []): bool
     {
         $queueUrl = $this->queueUrlHelper
             ->buildQueueUrl($queueName);
 
-        $this->awsSqsClient->purgeQueue([
-            static::API_RESPONSE_QUEUE_URL => $queueUrl,
-        ]);
+        $sqsPurgeQueueArgsTransfer = (new SqsPurgeQueueArgsTransfer())
+            ->setQueueName($queueUrl);
+
+        $this->awsSqsClient
+            ->purgeQueue($sqsPurgeQueueArgsTransfer);
 
         return true;
     }
@@ -115,20 +111,24 @@ class Manager implements ManagerInterface
      *
      * @return bool
      */
-    public function deleteQueue($queueName, array $options = [])
+    public function deleteQueue($queueName, array $options = []): bool
     {
         $queueUrl = $this->queueUrlHelper
             ->buildQueueUrl($queueName);
 
-        $this->awsSqsClient->deleteQueue([
-            static::API_RESPONSE_QUEUE_URL => $queueUrl,
-        ]);
+        $sqsDeleteQueueArgsTransfer = (new SqsDeleteQueueArgsTransfer())
+            ->setQueueName($queueUrl);
+
+        $this->awsSqsClient
+            ->deleteQueue($sqsDeleteQueueArgsTransfer);
 
         return true;
     }
 
     /**
-     * @inheritDoc
+     * @param array $queues
+     *
+     * @return bool
      */
     public function deleteQueues(array $queues): bool
     {
@@ -142,7 +142,10 @@ class Manager implements ManagerInterface
     }
 
     /**
-     * @inheritDoc
+     * @param array $queues
+     * @param array $options
+     *
+     * @return bool
      */
     public function createQueues(array $queues, array $options = []): bool
     {
