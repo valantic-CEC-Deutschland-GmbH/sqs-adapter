@@ -2,10 +2,15 @@
 
 namespace ValanticSpryker\Client\Sqs\Model\Consumer;
 
-use Aws\Sqs\SqsClient;
 use Generated\Shared\Transfer\QueueReceiveMessageTransfer;
 use Generated\Shared\Transfer\QueueSendMessageTransfer;
+use Generated\Shared\Transfer\SqsChangeMessageVisibilityArgsTransfer;
+use Generated\Shared\Transfer\SqsDeleteMessageArgsTransfer;
+use Generated\Shared\Transfer\SqsGetQueueAttributesArgsTransfer;
+use Generated\Shared\Transfer\SqsReceiveMessageArgsTransfer;
+use Generated\Shared\Transfer\SqsSendMessageArgsTransfer;
 use Spryker\Shared\Log\LoggerTrait;
+use ValanticSpryker\Client\Sqs\Dependency\Client\SqsAdapterToAwsSqsClientInterface;
 use ValanticSpryker\Client\Sqs\Model\Helper\QueueUrlHelperInterface;
 use ValanticSpryker\Client\Sqs\SqsConfig;
 
@@ -13,19 +18,19 @@ class Consumer implements ConsumerInterface
 {
     use LoggerTrait;
 
-    private SqsClient $awsSqsClient;
+    private SqsAdapterToAwsSqsClientInterface $awsSqsClient;
 
     private QueueUrlHelperInterface $queueUrlHelper;
 
     private SqsConfig $config;
 
     /**
-     * @param \Aws\Sqs\SqsClient $awsSqsClient
+     * @param \ValanticSpryker\Client\Sqs\Dependency\Client\SqsAdapterToAwsSqsClientInterface $awsSqsClient
      * @param \ValanticSpryker\Client\Sqs\Model\Helper\QueueUrlHelperInterface $queueUrlHelper
      * @param \ValanticSpryker\Client\Sqs\SqsConfig $config
      */
     public function __construct(
-        SqsClient $awsSqsClient,
+        SqsAdapterToAwsSqsClientInterface $awsSqsClient,
         QueueUrlHelperInterface $queueUrlHelper,
         SqsConfig $config
     ) {
@@ -41,18 +46,20 @@ class Consumer implements ConsumerInterface
      *
      * @return array<\Generated\Shared\Transfer\QueueReceiveMessageTransfer>
      */
-    public function receiveMessages($queueName, $chunkSize = 10, array $options = [])
+    public function receiveMessages($queueName, $chunkSize = 10, array $options = []): array
     {
         $queueUrl = $this->queueUrlHelper
             ->buildQueueUrl($queueName);
 
-        $result = $this->awsSqsClient->receiveMessage([
-            'MaxNumberOfMessages' => $chunkSize,
-            'MessageAttributeNames' => ['All'],
-            'QueueUrl' => $queueUrl,
-            'WaitTimeSeconds' => $this->config->getResponseWaitTime(),
-            'VisibilityTimeout' => $this->config->getResponseVisibilityTimeout(),
-        ]);
+        $sqsReceiveMessageArgsTransfer = (new SqsReceiveMessageArgsTransfer())
+            ->setQueueUrl($queueUrl)
+            ->setMaxNumberOfMessages($chunkSize)
+            ->setMessageAttributeNames(['All'])
+            ->setWaitTimeSeconds($this->config->getResponseWaitTime())
+            ->setVisibilityTimeout($this->config->getResponseVisibilityTimeout());
+
+        $result = $this->awsSqsClient
+            ->receiveMessage($sqsReceiveMessageArgsTransfer);
 
         $queueMessages = [];
 
@@ -85,12 +92,14 @@ class Consumer implements ConsumerInterface
             return $this->createQueueReceiveMessageTransfer($queueName, ['Body' => null, 'ReceiptHandle' => null]);
         }
 
-        $result = $this->awsSqsClient->receiveMessage([
-            'MaxNumberOfMessages' => 1,
-            'MessageAttributeNames' => ['All'],
-            'QueueUrl' => $queueUrl,
-            'WaitTimeSeconds' => $this->config->getResponseWaitTime(),
-        ]);
+        $sqsReceiveMessageArgsTransfer = (new SqsReceiveMessageArgsTransfer())
+            ->setQueueUrl($queueUrl)
+            ->setMaxNumberOfMessages(1)
+            ->setMessageAttributeNames(['All'])
+            ->setWaitTimeSeconds($this->config->getResponseWaitTime())
+            ->setVisibilityTimeout($this->config->getResponseVisibilityTimeout());
+
+        $result = $this->awsSqsClient->receiveMessage($sqsReceiveMessageArgsTransfer);
 
         $messages = $result->get('Messages');
 
@@ -144,10 +153,11 @@ class Consumer implements ConsumerInterface
         $queueUrl = $this->queueUrlHelper
             ->buildQueueUrl($queueReceiveMessageTransfer->getQueueName());
 
-        $this->awsSqsClient->deleteMessage([
-            'QueueUrl' => $queueUrl,
-            'ReceiptHandle' => $queueReceiveMessageTransfer->getRoutingKey(),
-        ]);
+        $sqsDeleteMessageArgsTransfer = (new SqsDeleteMessageArgsTransfer())
+            ->setQueueUrl($queueUrl)
+            ->setReceiptHandle($queueReceiveMessageTransfer->getRoutingKey());
+
+        $this->awsSqsClient->deleteMessage($sqsDeleteMessageArgsTransfer);
     }
 
     /**
@@ -168,11 +178,12 @@ class Consumer implements ConsumerInterface
         $queueUrl = $this->queueUrlHelper
             ->buildQueueUrl($queueReceiveMessageTransfer->getQueueName());
 
-        $this->awsSqsClient->changeMessageVisibilityAsync([
-            'QueueUrl' => $queueUrl,
-            'ReceiptHandle' => $queueReceiveMessageTransfer->getRoutingKey(),
-            'VisibilityTimeout' => 0,
-        ]);
+        $sqsChangeMessageVisibilityArgsTransfer = (new SqsChangeMessageVisibilityArgsTransfer())
+            ->setQueueUrl($queueUrl)
+            ->setReceiptHandle($queueReceiveMessageTransfer->getRoutingKey())
+            ->setVisibilityTimeout(0);
+
+        $this->awsSqsClient->changeMessageVisibilityAsync($sqsChangeMessageVisibilityArgsTransfer);
     }
 
     /**
@@ -186,10 +197,12 @@ class Consumer implements ConsumerInterface
             return false;
         }
 
-        return $this->awsSqsClient->sendMessage([
-            'QueueUrl' => $queueReceiveMessageTransfer->getQueueName(),
-            'MessageBody' => $queueReceiveMessageTransfer->getQueueMessage()->getBody(),
-        ])->hasKey('MessageId');
+        $sqsSendMessageArgsTransfer = (new SqsSendMessageArgsTransfer())
+            ->setQueueUrl($queueReceiveMessageTransfer->getQueueName())
+            ->setMessageBody($queueReceiveMessageTransfer->getQueueMessage()->getBody());
+
+        return $this->awsSqsClient
+            ->sendMessage($sqsSendMessageArgsTransfer)->hasKey('MessageId');
     }
 
     /**
@@ -199,12 +212,11 @@ class Consumer implements ConsumerInterface
      */
     protected function getApproximateMessageCount(string $queueUrl): int
     {
-        $result = $this->awsSqsClient->getQueueAttributes(
-            [
-                'QueueUrl' => $queueUrl,
-                'AttributeNames' => ['ApproximateNumberOfMessages'],
-            ],
-        );
+        $sqsGetQueueAttributesArgsTransfer = (new SqsGetQueueAttributesArgsTransfer())
+            ->setQueueUrl($queueUrl)
+            ->setAttributeNames(['ApproximateNumberOfMessages']);
+
+        $result = $this->awsSqsClient->getQueueAttributes($sqsGetQueueAttributesArgsTransfer);
 
         return (int)($result->get('Attributes')['ApproximateNumberOfMessages']);
     }

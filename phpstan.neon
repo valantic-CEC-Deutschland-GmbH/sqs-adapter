@@ -7,4 +7,5 @@ parameters:
     bootstrapFiles:
         - tests/bootstrap.php
     ignoreErrors:
+        - '#Call to method awsSqs\(\) on an unknown class .+AutoCompletion#'
         - '#Call to method sqs\(\) on an unknown class .+AutoCompletion#'

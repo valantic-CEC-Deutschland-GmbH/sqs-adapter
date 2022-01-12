@@ -2,13 +2,10 @@
 
 namespace ValanticSpryker\Client\Sqs;
 
-use Aws\Credentials\CredentialProvider;
-use Aws\Credentials\Credentials;
-use Aws\Credentials\CredentialsInterface;
-use Aws\Sqs\SqsClient;
 use Spryker\Client\Kernel\AbstractFactory;
 use Spryker\Client\Queue\Model\Adapter\AdapterInterface;
 use Spryker\Shared\Log\LoggerTrait;
+use ValanticSpryker\Client\Sqs\Dependency\Client\SqsAdapterToAwsSqsClientInterface;
 use ValanticSpryker\Client\Sqs\Model\Consumer\Consumer;
 use ValanticSpryker\Client\Sqs\Model\Consumer\ConsumerInterface;
 use ValanticSpryker\Client\Sqs\Model\Helper\QueueUrlHelper;
@@ -25,11 +22,6 @@ use ValanticSpryker\Client\Sqs\Model\SqsAdapter;
 class SqsFactory extends AbstractFactory
 {
     use LoggerTrait;
-
-    /**
-     * @var string
-     */
-    public const AWS_SQS_CLIENT_CONFIG_KEY_CREDENTIALS = 'credentials';
 
     /**
      * @return \Spryker\Client\Queue\Model\Adapter\AdapterInterface
@@ -49,7 +41,7 @@ class SqsFactory extends AbstractFactory
     public function createSqsManager(): ManagerInterface
     {
         return new Manager(
-            $this->createAwsSqsClient(),
+            $this->getAwsSqsClient(),
             $this->getConfig(),
             $this->createQueueUrlHelper(),
         );
@@ -61,7 +53,7 @@ class SqsFactory extends AbstractFactory
     public function createSqsConsumer(): ConsumerInterface
     {
         return new Consumer(
-            $this->createAwsSqsClient(),
+            $this->getAwsSqsClient(),
             $this->createQueueUrlHelper(),
             $this->getConfig(),
         );
@@ -73,7 +65,7 @@ class SqsFactory extends AbstractFactory
     public function createSqsPublisher(): PublisherInterface
     {
         return new Publisher(
-            $this->createAwsSqsClient(),
+            $this->getAwsSqsClient(),
             $this->createQueueUrlHelper(),
         );
     }
@@ -89,35 +81,10 @@ class SqsFactory extends AbstractFactory
     }
 
     /**
-     * @return \Aws\Sqs\SqsClient
+     * @return \ValanticSpryker\Client\Sqs\Dependency\Client\SqsAdapterToAwsSqsClientInterface
      */
-    public function createAwsSqsClient(): SqsClient
+    public function getAwsSqsClient(): SqsAdapterToAwsSqsClientInterface
     {
-        $config = $this->getConfig()
-            ->getAwsSqsClientConfig();
-
-        $config[self::AWS_SQS_CLIENT_CONFIG_KEY_CREDENTIALS] = $this->createCredentialsProvider();
-
-        return new SqsClient($config);
-    }
-
-    /**
-     * @return callable
-     */
-    public function createCredentialsProvider(): callable
-    {
-        if ($this->getConfig()->useIamRole()) {
-            return CredentialProvider::memoize(CredentialProvider::assumeRoleWithWebIdentityCredentialProvider());
-        }
-
-        return CredentialProvider::memoize(CredentialProvider::fromCredentials($this->createCredentials()));
-    }
-
-    /**
-     * @return \Aws\Credentials\CredentialsInterface
-     */
-    public function createCredentials(): CredentialsInterface
-    {
-        return new Credentials(...array_values($this->getConfig()->getCredentials()));
+        return $this->getProvidedDependency(SqsDependencyProvider::CLIENT_AWS_SQS);
     }
 }
