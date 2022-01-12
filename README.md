@@ -27,28 +27,10 @@ Make sure to add **auth.json** to your **.gitignore**.
 composer req valantic-spryker/sqs
 ```
 
-### Update your shared config for AWS client
-```
-$config[SqsConstants::AWS_SQS_ACCOUNT_ID] = 'foo-bar';
-$config[SqsConstants::AWS_SQS_CONFIG_PARAM_REGION] = 'us-east-1';
-$config[SqsConstants::AWS_SQS_CONFIG_PARAM_VERSION] = 'latest';
-```
-
 ### Update your shared config for SQS (sample for ElasticMQ)
 ```
 $config[SqsConstants::SQS_BASE_URL] = 'http://elasticmq:9324';
 $config[SqsConstants::SQS_QUEUE_PATH_PREFIX] = 'queue/';
-```
-
-Username and password, if required
-```
-$config[SqsConstants::SQS_CONFIG_CREDENTIALS_KEY] = 'key';
-$config[SqsConstants::SQS_CONFIG_CREDENTIALS_SECRET] = 'secret';
-```
-
-Or, if your are using AWS IAM roles
-```
-$config[SqsConstants::SQS_CONFIG_PARAM_USE_IAM] = true;
 ```
 
 ### Update your QueueConfig
