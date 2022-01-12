@@ -50,6 +50,6 @@ post-test:install-package:
   stage: post-test
   before_script:
     - composer config gitlab-token.${CI_SERVER_HOST} ${CI_DEPLOY_USER} ${CI_DEPLOY_PASSWORD}
-     rm -v composer.*
+    - rm -v composer.*
   script:
     - composer require valantic-spryker/sqs
