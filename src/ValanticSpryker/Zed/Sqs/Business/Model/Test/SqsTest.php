@@ -13,6 +13,9 @@ use ValanticSpryker\Zed\Sqs\SqsConfig;
 
 class SqsTest implements SqsTestInterface
 {
+    /**
+     * @var string
+     */
     private const ERROR_NO_QUEUES_DEFINED = 'No queues defined.';
 
     protected SqsClientInterface $sqsClient;
