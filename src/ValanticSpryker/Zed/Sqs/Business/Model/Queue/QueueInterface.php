@@ -13,19 +13,19 @@ interface QueueInterface
      *
      * @return bool
      */
-    public function purgeAllQueues(LoggerInterface $logger);
+    public function purgeAllQueues(LoggerInterface $logger): bool;
 
     /**
      * @param \Psr\Log\LoggerInterface $logger
      *
      * @return bool
      */
-    public function createQueues(LoggerInterface $logger);
+    public function createQueues(LoggerInterface $logger): bool;
 
     /**
      * @param \Psr\Log\LoggerInterface $logger
      *
      * @return bool
      */
-    public function deleteQueues(LoggerInterface $logger);
+    public function deleteQueues(LoggerInterface $logger): bool;
 }

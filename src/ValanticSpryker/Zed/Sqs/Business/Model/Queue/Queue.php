@@ -35,7 +35,7 @@ class Queue implements QueueInterface
      *
      * @return bool
      */
-    public function purgeAllQueues(LoggerInterface $logger)
+    public function purgeAllQueues(LoggerInterface $logger): bool
     {
         $sqsAdapter = $this->sqsClient
             ->createQueueAdapter();
@@ -57,7 +57,7 @@ class Queue implements QueueInterface
      *
      * @return bool
      */
-    public function createQueues(LoggerInterface $logger)
+    public function createQueues(LoggerInterface $logger): bool
     {
         $sqsAdapter = $this->sqsClient
             ->createQueueAdapter();
@@ -83,7 +83,7 @@ class Queue implements QueueInterface
      *
      * @return bool
      */
-    public function deleteQueues(LoggerInterface $logger)
+    public function deleteQueues(LoggerInterface $logger): bool
     {
         $sqsAdapter = $this->sqsClient
             ->createQueueAdapter();

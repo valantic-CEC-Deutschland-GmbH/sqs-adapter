@@ -2,7 +2,6 @@
 
 namespace ValanticSpryker\Client\Sqs\Model\Manager;
 
-use Generated\Shared\Transfer\SqsCreateQueueArgsAttributesTransfer;
 use Generated\Shared\Transfer\SqsCreateQueueArgsTransfer;
 use Generated\Shared\Transfer\SqsDeleteQueueArgsTransfer;
 use Generated\Shared\Transfer\SqsPurgeQueueArgsTransfer;
@@ -64,12 +63,9 @@ class Manager implements ManagerInterface
      */
     public function createQueue($queueName, array $options = []): array
     {
-        $sqsCreateQueueArgsAttributesTransfer = (new SqsCreateQueueArgsAttributesTransfer())
-            ->fromArray($options, true);
-
         $sqsCreateQueueArgsTransfer = (new SqsCreateQueueArgsTransfer())
             ->setQueueName($queueName)
-            ->setAttributes($sqsCreateQueueArgsAttributesTransfer)
+            ->setAttributes($options)
             ->setTags([
                 static::TAG_KEY_CREATOR => static::TAG_VALUE_CREATOR_SPRYKER,
                 static::TAG_KEY_NAME => $queueName,
@@ -97,7 +93,7 @@ class Manager implements ManagerInterface
             ->buildQueueUrl($queueName);
 
         $sqsPurgeQueueArgsTransfer = (new SqsPurgeQueueArgsTransfer())
-            ->setQueueName($queueUrl);
+            ->setQueueUrl($queueUrl);
 
         $this->awsSqsClient
             ->purgeQueue($sqsPurgeQueueArgsTransfer);
@@ -117,7 +113,7 @@ class Manager implements ManagerInterface
             ->buildQueueUrl($queueName);
 
         $sqsDeleteQueueArgsTransfer = (new SqsDeleteQueueArgsTransfer())
-            ->setQueueName($queueUrl);
+            ->setQueueUrl($queueUrl);
 
         $this->awsSqsClient
             ->deleteQueue($sqsDeleteQueueArgsTransfer);
