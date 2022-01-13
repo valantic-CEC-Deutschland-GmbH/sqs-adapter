@@ -7,6 +7,9 @@ namespace ValanticSpryker\Zed\Sqs\Business;
 use Spryker\Zed\Kernel\Business\AbstractBusinessFactory;
 use ValanticSpryker\Client\Sqs\SqsClientInterface;
 use ValanticSpryker\Zed\Sqs\Business\Model\Queue\Queue;
+use ValanticSpryker\Zed\Sqs\Business\Model\Queue\QueueInterface;
+use ValanticSpryker\Zed\Sqs\Business\Model\Test\SqsTest;
+use ValanticSpryker\Zed\Sqs\Business\Model\Test\SqsTestInterface;
 use ValanticSpryker\Zed\Sqs\SqsDependencyProvider;
 
 /**
@@ -17,9 +20,20 @@ class SqsBusinessFactory extends AbstractBusinessFactory
     /**
      * @return \ValanticSpryker\Zed\Sqs\Business\Model\Queue\QueueInterface
      */
-    public function createQueue()
+    public function createQueue(): QueueInterface
     {
         return new Queue(
+            $this->getSqsClient(),
+            $this->getConfig(),
+        );
+    }
+
+    /**
+     * @return \ValanticSpryker\Zed\Sqs\Business\Model\Test\SqsTestInterface
+     */
+    public function createSqsTest(): SqsTestInterface
+    {
+        return new SqsTest(
             $this->getSqsClient(),
             $this->getConfig(),
         );

@@ -1,6 +1,10 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types = 1);
 
 namespace ValanticSpryker\Client\Sqs;
+
+use Spryker\Client\Queue\Model\Adapter\AdapterInterface;
 
 interface SqsClientInterface
 {
@@ -12,7 +16,7 @@ interface SqsClientInterface
      *
      * @return \Spryker\Client\Queue\Model\Adapter\AdapterInterface
      */
-    public function createQueueAdapter();
+    public function createQueueAdapter(): AdapterInterface;
 
     /**
      * Specification:
@@ -22,5 +26,5 @@ interface SqsClientInterface
      *
      * @return \ValanticSpryker\Client\Sqs\SqsConfig
      */
-    public function getClientConfig();
+    public function getClientConfig(): SqsConfig;
 }

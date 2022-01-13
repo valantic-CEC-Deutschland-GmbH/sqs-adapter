@@ -1,8 +1,11 @@
-<?php declare(strict_types = 1 );
+<?php
+
+declare(strict_types = 1 );
 
 namespace ValanticSpryker\Client\Sqs;
 
 use Spryker\Client\Kernel\AbstractClient;
+use Spryker\Client\Queue\Model\Adapter\AdapterInterface;
 
 /**
  * @method \ValanticSpryker\Client\Sqs\SqsFactory getFactory()
@@ -16,7 +19,7 @@ class SqsClient extends AbstractClient implements SqsClientInterface
      *
      * @return \Spryker\Client\Queue\Model\Adapter\AdapterInterface
      */
-    public function createQueueAdapter()
+    public function createQueueAdapter(): AdapterInterface
     {
         return $this->getFactory()
             ->createQueueAdapter();
@@ -29,7 +32,7 @@ class SqsClient extends AbstractClient implements SqsClientInterface
      *
      * @return \ValanticSpryker\Client\Sqs\SqsConfig
      */
-    public function getClientConfig()
+    public function getClientConfig(): SqsConfig
     {
         return $this->getFactory()
             ->getConfig();
