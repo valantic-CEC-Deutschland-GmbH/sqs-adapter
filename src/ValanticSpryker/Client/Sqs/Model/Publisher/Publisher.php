@@ -50,7 +50,7 @@ class Publisher implements PublisherInterface
             ->setMessageBody($queueSendMessageTransfer->getBody());
 
         $this->awsSqsClient
-            ->sendMessageAsync($sqsSendMessageArgsTransfer);
+            ->sendMessage($sqsSendMessageArgsTransfer);
     }
 
     /**

@@ -71,4 +71,16 @@ class SqsFacade extends AbstractFacade implements SqsFacadeInterface
             ->createSqsTest()
             ->sendTestMessage($logger);
     }
+
+    /**
+     * @param \Psr\Log\LoggerInterface $logger
+     *
+     * @return bool
+     */
+    public function receiveMessage(LoggerInterface $logger): bool
+    {
+        return $this->getFactory()
+            ->createSqsTest()
+            ->receiveMessage($logger);
+    }
 }

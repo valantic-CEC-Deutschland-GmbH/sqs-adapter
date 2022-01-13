@@ -14,4 +14,11 @@ interface SqsTestInterface
      * @return bool
      */
     public function sendTestMessage(LoggerInterface $logger): bool;
+
+    /**
+     * @param \Psr\Log\LoggerInterface $logger
+     *
+     * @return bool
+     */
+    public function receiveMessage(LoggerInterface $logger): bool;
 }
