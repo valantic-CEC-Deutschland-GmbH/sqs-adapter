@@ -4,13 +4,17 @@ declare(strict_types = 1);
 
 namespace ValanticSpryker\Zed\Sqs\Business\Model\Test;
 
+use Generated\Shared\Transfer\QueueReceiveMessageTransfer;
 use Generated\Shared\Transfer\QueueSendMessageTransfer;
 use Psr\Log\LoggerInterface;
 use ValanticSpryker\Client\Sqs\SqsClientInterface;
+use ValanticSpryker\Zed\Sqs\Business\Model\Exception\NoQueuesDefinedException;
 use ValanticSpryker\Zed\Sqs\SqsConfig;
 
 class SqsTest implements SqsTestInterface
 {
+    private const ERROR_NO_QUEUES_DEFINED = 'No queues defined.';
+
     protected SqsClientInterface $sqsClient;
 
     protected SqsConfig $config;
@@ -40,7 +44,7 @@ class SqsTest implements SqsTestInterface
             ->getQueues();
 
         if (empty($queues)) {
-            $logger->error('No queues defined.');
+            $logger->error(self::ERROR_NO_QUEUES_DEFINED);
 
             return false;
         }
@@ -58,9 +62,11 @@ class SqsTest implements SqsTestInterface
     /**
      * @param \Psr\Log\LoggerInterface $logger
      *
-     * @return bool
+     * @throws \ValanticSpryker\Zed\Sqs\Business\Model\Exception\NoQueuesDefinedException
+     *
+     * @return \Generated\Shared\Transfer\QueueReceiveMessageTransfer
      */
-    public function receiveMessage(LoggerInterface $logger): bool
+    public function receiveMessage(LoggerInterface $logger): QueueReceiveMessageTransfer
     {
         $sqsAdapter = $this->sqsClient
             ->createQueueAdapter();
@@ -70,15 +76,11 @@ class SqsTest implements SqsTestInterface
             ->getQueues();
 
         if (empty($queues)) {
-            $logger->error('No queues defined.');
+            $logger->error(self::ERROR_NO_QUEUES_DEFINED);
 
-            return false;
+            throw new NoQueuesDefinedException(self::ERROR_NO_QUEUES_DEFINED);
         }
 
-        $queueReceiveMessageTransfer = $sqsAdapter->receiveMessage($queues[0]);
-
-        $logger->info(print_r($queueReceiveMessageTransfer->toArray(), true));
-
-        return true;
+        return $sqsAdapter->receiveMessage($queues[0]);
     }
 }

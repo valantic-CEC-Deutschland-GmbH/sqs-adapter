@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace ValanticSpryker\Zed\Sqs\Business;
 
+use Generated\Shared\Transfer\QueueReceiveMessageTransfer;
 use Psr\Log\LoggerInterface;
 use Spryker\Zed\Kernel\Business\AbstractFacade;
 
@@ -75,9 +76,9 @@ class SqsFacade extends AbstractFacade implements SqsFacadeInterface
     /**
      * @param \Psr\Log\LoggerInterface $logger
      *
-     * @return bool
+     * @return \Generated\Shared\Transfer\QueueReceiveMessageTransfer
      */
-    public function receiveMessage(LoggerInterface $logger): bool
+    public function receiveMessage(LoggerInterface $logger): QueueReceiveMessageTransfer
     {
         return $this->getFactory()
             ->createSqsTest()
