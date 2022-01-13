@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace ValanticSpryker\Zed\Sqs;
 
 use Spryker\Zed\Kernel\AbstractBundleDependencyProvider;
@@ -17,7 +19,7 @@ class SqsDependencyProvider extends AbstractBundleDependencyProvider
      *
      * @return \Spryker\Zed\Kernel\Container
      */
-    public function provideBusinessLayerDependencies(Container $container)
+    public function provideBusinessLayerDependencies(Container $container): Container
     {
         $container = $this->addSqsClient($container);
 
@@ -29,7 +31,7 @@ class SqsDependencyProvider extends AbstractBundleDependencyProvider
      *
      * @return \Spryker\Zed\Kernel\Container
      */
-    protected function addSqsClient(Container $container)
+    protected function addSqsClient(Container $container): Container
     {
         $container->set(static::SQS_CLIENT, function () use ($container) {
             return $container->getLocator()->sqs()->client();

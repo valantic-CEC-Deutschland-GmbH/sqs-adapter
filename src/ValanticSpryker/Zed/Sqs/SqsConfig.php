@@ -10,11 +10,6 @@ use ValanticSpryker\Shared\Sqs\SqsConstants;
 class SqsConfig extends AbstractBundleConfig
 {
     /**
-     * @var int
-     */
-    protected const AWS_SQS_CONFIG_QUEUE_OPTION_MAX_RECEIVE_COUNT_DEFAULT = 10;
-
-    /**
      * @return array
      */
     public function getDefaultSqsQueueOptions(): array

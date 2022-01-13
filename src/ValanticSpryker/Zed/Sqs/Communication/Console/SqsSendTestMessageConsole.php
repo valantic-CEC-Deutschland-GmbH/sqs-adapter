@@ -1,4 +1,6 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types = 1);
 
 namespace ValanticSpryker\Zed\Sqs\Communication\Console;
 
@@ -9,32 +11,22 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @method \ValanticSpryker\Zed\Sqs\Business\SqsFacadeInterface getFacade()
  */
-class SqsPurgeAllQueuesConsole extends Console
+class SqsSendTestMessageConsole extends Console
 {
     /**
      * @var string
      */
-    public const COMMAND_NAME = 'sqs:purge-queues';
+    public const COMMAND_NAME = 'sqs:send-test-message';
 
     /**
      * @var string
      */
-    public const DESCRIPTION = 'This command removes all messages from configured queues in SQS';
+    public const DESCRIPTION = 'This command send a test message to the first queue in SqsConfig';
 
     /**
      * @var string
      */
-    public const HELP = 'This command removes all messages from all queues';
-
-    /**
-     * @var string
-     */
-    public const ERROR_MESSAGE = 'Error on purging queues';
-
-    /**
-     * @var string
-     */
-    public const SUCCESS_MESSAGE = 'Queues successfully purged';
+    public const HELP = 'This command send a test message to the first queue in SqsConfig';
 
     /**
      * @return void
@@ -55,16 +47,8 @@ class SqsPurgeAllQueuesConsole extends Console
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $success = $this->getFacade()
-            ->purgeAllQueues($this->getMessenger());
+            ->createQueues($this->getMessenger());
 
-        if ($success === false) {
-            $this->error(static::ERROR_MESSAGE);
-
-            return static::CODE_ERROR;
-        }
-
-        $this->success(static::SUCCESS_MESSAGE);
-
-        return static::CODE_SUCCESS;
+        return $success === true ? static::CODE_SUCCESS : static::CODE_ERROR;
     }
 }

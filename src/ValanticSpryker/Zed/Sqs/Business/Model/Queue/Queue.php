@@ -10,15 +10,9 @@ use ValanticSpryker\Zed\Sqs\SqsConfig;
 
 class Queue implements QueueInterface
 {
-    /**
-     * @var \ValanticSpryker\Client\Sqs\SqsClientInterface
-     */
-    protected $sqsClient;
+    protected SqsClientInterface $sqsClient;
 
-    /**
-     * @var \ValanticSpryker\Zed\Sqs\SqsConfig
-     */
-    protected $config;
+    protected SqsConfig $config;
 
     /**
      * @param \ValanticSpryker\Client\Sqs\SqsClientInterface $sqsClient
