@@ -83,10 +83,10 @@ class Consumer implements ConsumerInterface
         $queueUrl = $this->queueUrlHelper
             ->buildQueueUrl($queueName);
 
-        /** @var \Generated\Shared\Transfer\AwsSqsConsumerOptionTransfer $awsSqsOptions */
-        $awsSqsOptions = $options['aws-sqs'];
+        /** @var \Generated\Shared\Transfer\AwsSqsConsumerOptionTransfer|null $awsSqsOptions */
+        $awsSqsOptions = $options['aws-sqs'] ?? null;
 
-        if ($awsSqsOptions->getCheckMessageCount()) {
+        if ($awsSqsOptions !== null && $awsSqsOptions->getCheckMessageCount()) {
             if ($this->getApproximateMessageCount($queueUrl) === 0) {
                 return $this->createQueueReceiveMessageTransfer($queueName, null);
             }

@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace ValanticSpryker\Zed\Sqs\Business\Model\Test;
 
+use Generated\Shared\Transfer\QueueReceiveMessageTransfer;
 use Psr\Log\LoggerInterface;
 
 interface SqsTestInterface
@@ -18,7 +19,7 @@ interface SqsTestInterface
     /**
      * @param \Psr\Log\LoggerInterface $logger
      *
-     * @return bool
+     * @return \Generated\Shared\Transfer\QueueReceiveMessageTransfer
      */
-    public function receiveMessage(LoggerInterface $logger): bool;
+    public function receiveMessage(LoggerInterface $logger): QueueReceiveMessageTransfer;
 }
