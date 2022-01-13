@@ -54,4 +54,31 @@ class SqsTest implements SqsTestInterface
 
         return true;
     }
+
+    /**
+     * @param \Psr\Log\LoggerInterface $logger
+     *
+     * @return bool
+     */
+    public function receiveMessage(LoggerInterface $logger): bool
+    {
+        $sqsAdapter = $this->sqsClient
+            ->createQueueAdapter();
+
+        $queues = $this->sqsClient
+            ->getClientConfig()
+            ->getQueues();
+
+        if (empty($queues)) {
+            $logger->error('No queues defined.');
+
+            return false;
+        }
+
+        $queueReceiveMessageTransfer = $sqsAdapter->receiveMessage($queues[0]);
+
+        $logger->info(print_r($queueReceiveMessageTransfer->toArray(), true));
+
+        return true;
+    }
 }

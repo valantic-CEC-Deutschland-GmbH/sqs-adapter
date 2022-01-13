@@ -47,7 +47,10 @@ class SqsSendTestMessageConsole extends Console
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $success = $this->getFacade()
-            ->createQueues($this->getMessenger());
+            ->sendTestMessage($this->getMessenger());
+
+        $success = $success && $this->getFacade()
+            ->receiveMessage($this->getMessenger());
 
         return $success === true ? static::CODE_SUCCESS : static::CODE_ERROR;
     }
