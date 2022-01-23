@@ -27,6 +27,16 @@ Make sure to add **auth.json** to your **.gitignore**.
 composer req valantic-spryker/sqs
 ```
 
+### Update shared config
+`config/Shared/config_default.php`
+
+```
+$config[KernelConstants::CORE_NAMESPACES] = [
+    ...
+    'ValanticSpryker',
+];
+```
+
 ### Update your shared config for SQS (sample for ElasticMQ)
 ```
 $config[SqsConstants::SQS_BASE_URL] = 'http://elasticmq:9324';
