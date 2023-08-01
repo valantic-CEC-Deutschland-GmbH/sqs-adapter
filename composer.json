@@ -1,5 +1,5 @@
 {
-  "name": "valantic-spryker/sqs",
+  "name": "valantic-cec/sqs",
   "type": "library",
   "description": "SQS implementation as an adapter for spryker/queue",
   "homepage": "https://www.valantic.com",
@@ -45,8 +45,7 @@
     "sort-packages": true,
     "allow-plugins": {
       "dealerdirect/phpcodesniffer-composer-installer": true
-    },
-    "gitlab-domains": ["gitlab.nxs360.com"]
+    }
   },
   "authors": [
     {
@@ -61,11 +60,5 @@
   ],
   "include-path": [
     "src/"
-  ],
-  "repositories": {
-    "gitlab.nxs360.com/461": {
-      "type": "composer",
-      "url": "https://gitlab.nxs360.com/api/v4/group/461/-/packages/composer/packages.json"
-    }
-  }
+  ]
 }
