@@ -3,7 +3,7 @@
   "type": "library",
   "description": "SQS implementation as an adapter for spryker/queue",
   "homepage": "https://www.valantic.com",
-  "license": "MIT",
+  "license": "proprietary",
   "require": {
     "php": ">=7.4",
     "spryker/kernel": "^3.56.0",
