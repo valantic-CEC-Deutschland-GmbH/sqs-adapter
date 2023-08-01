@@ -4,7 +4,7 @@ SQS implementation as an adapter for spryker/queue
 
 ### Install package
 ```
-composer req valantic-cec/sqs
+composer req valantic-spryker-eco/sqs
 ```
 
 ### Update shared config
